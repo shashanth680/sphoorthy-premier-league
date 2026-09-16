@@ -21,10 +21,10 @@ class PlayerCreate(BaseModel):
 
     photo_url: str | None = None
 
-    base_price: float = Field(
-        default=10000,
-        ge=0
-    )
+    base_price: float | None = Field(
+    default=None,
+    ge=0
+)
 
 
 class PlayerUpdate(BaseModel):
@@ -44,10 +44,10 @@ class PlayerUpdate(BaseModel):
 
     photo_url: str | None = None
 
-    base_price: float | None = Field(
-    default=None,
-    ge=0
-)
+    base_price: float = Field(
+        default=10000,
+        ge=0
+    )
 
 
 class PlayerResponse(BaseModel):
