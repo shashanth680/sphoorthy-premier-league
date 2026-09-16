@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import FRONTEND_URL
 from .routes.auth import router as auth_router
 from .routes.me import router as me_router
+from .routes.teams import router as teams_router
 
 
 app = FastAPI(
@@ -27,6 +28,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(me_router)
+app.include_router(teams_router)
 
 
 @app.get("/")
