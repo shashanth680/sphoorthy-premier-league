@@ -21,14 +21,7 @@ def create_franchise(data):
             detail="Team not found"
         )
 
-    # Check whether the email is already used
-    existing_profile = (
-        supabase
-        .table("profiles")
-        .select("id")
-        .eq("id", "00000000-0000-0000-0000-000000000000")
-        .execute()
-    )
+  
 
     try:
         # Create Supabase Auth user
