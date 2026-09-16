@@ -45,9 +45,9 @@ class PlayerUpdate(BaseModel):
     photo_url: str | None = None
 
     base_price: float | None = Field(
-        default=None,
-        ge=0
-    )
+    default=None,
+    ge=0
+)
 
 
 class PlayerResponse(BaseModel):
