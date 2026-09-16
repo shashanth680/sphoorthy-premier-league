@@ -1,9 +1,6 @@
-from datetime import datetime, timezone
-
 from fastapi import HTTPException
 
 from ..supabase_client import supabase
-from .auction_service import get_settings
 
 
 def place_bid(
@@ -12,175 +9,79 @@ def place_bid(
     amount: float
 ):
 
-    # Get current auction
-    auction_response = (
-        supabase
-        .table("auctions")
-        .select("*")
-        .eq("id", auction_id)
-        .single()
-        .execute()
-    )
+    try:
 
-    auction = auction_response.data
+        response = supabase.rpc(
+            "place_bid",
+            {
+                "p_auction_id": auction_id,
+                "p_team_id": team_id,
+                "p_amount": amount
+            }
+        ).execute()
 
-    if not auction:
-        raise HTTPException(
-            status_code=404,
-            detail="Auction not found"
-        )
+    except Exception as error:
 
-    # Auction must be live
-    if auction["status"] != "LIVE":
-        raise HTTPException(
-            status_code=400,
-            detail="Auction is not live"
-        )
+        message = str(error)
 
-    # Check timer
-    if auction["ends_at"]:
-
-        ends_at = datetime.fromisoformat(
-            auction["ends_at"].replace(
-                "Z",
-                "+00:00"
+        if "Auction not found" in message:
+            raise HTTPException(
+                status_code=404,
+                detail="Auction not found"
             )
-        )
 
-        now = datetime.now(timezone.utc)
+        if "Auction is not live" in message:
+            raise HTTPException(
+                status_code=400,
+                detail="Auction is not live"
+            )
 
-        if now >= ends_at:
-
-            supabase \
-                .table("auctions") \
-                .update({
-                    "status": "AWAITING_SOLD"
-                }) \
-                .eq("id", auction_id) \
-                .execute()
-
+        if "timer has expired" in message:
             raise HTTPException(
                 status_code=400,
                 detail="Auction timer has expired"
             )
 
-    # Get team
-    team_response = (
-        supabase
-        .table("teams")
-        .select("*")
-        .eq("id", team_id)
-        .single()
-        .execute()
-    )
-
-    team = team_response.data
-
-    if not team:
-        raise HTTPException(
-            status_code=404,
-            detail="Team not found"
-        )
-
-    # Check squad size
-    squad_response = (
-        supabase
-        .table("squads")
-        .select("id")
-        .eq("team_id", team_id)
-        .execute()
-    )
-
-    squad_count = len(
-        squad_response.data or []
-    )
-
-    if squad_count >= team["max_squad_size"]:
-
-        raise HTTPException(
-            status_code=400,
-            detail="Team squad is already full"
-        )
-
-    # Bid must be higher than current bid
-    current_bid = auction["current_bid"]
-
-    if amount <= current_bid:
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"Bid must be higher than "
-                f"current bid of {current_bid}"
+        if "Team not found" in message:
+            raise HTTPException(
+                status_code=404,
+                detail="Team not found"
             )
-        )
 
-    # Check bid increment
-    settings = get_settings()
-
-    increment = settings["bid_increment"]
-
-    if (
-        amount - current_bid
-    ) < increment:
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"Minimum bid increment is "
-                f"{increment}"
+        if "squad is already full" in message:
+            raise HTTPException(
+                status_code=400,
+                detail="Team squad is already full"
             )
-        )
 
-    # Check team purse
-    if amount > team["purse_remaining"]:
+        if "Insufficient purse" in message:
+            raise HTTPException(
+                status_code=400,
+                detail="Insufficient purse"
+            )
 
-        raise HTTPException(
-            status_code=400,
-            detail="Insufficient purse"
-        )
+        if "Minimum bid increment" in message:
+            raise HTTPException(
+                status_code=400,
+                detail=message
+            )
 
-    # Save bid
-    bid_response = (
-        supabase
-        .table("bids")
-        .insert({
-            "auction_id": auction_id,
-            "player_id": auction["player_id"],
-            "team_id": team_id,
-            "amount": amount
-        })
-        .execute()
-    )
-
-    if not bid_response.data:
+        if "Bid must be higher" in message:
+            raise HTTPException(
+                status_code=400,
+                detail=message
+            )
 
         raise HTTPException(
             status_code=500,
             detail="Failed to place bid"
         )
 
-    # Update auction
-    updated_auction = (
-        supabase
-        .table("auctions")
-        .update({
-            "current_bid": amount,
-            "highest_team_id": team_id
-        })
-        .eq("id", auction_id)
-        .execute()
-    )
-
-    if not updated_auction.data:
+    if not response.data:
 
         raise HTTPException(
             status_code=500,
-            detail="Failed to update auction"
+            detail="Failed to place bid"
         )
 
-    return {
-        "success": True,
-        "bid": bid_response.data[0],
-        "auction": updated_auction.data[0]
-    }
+    return response.data
