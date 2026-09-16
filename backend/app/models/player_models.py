@@ -20,6 +20,7 @@ class PlayerCreate(BaseModel):
     bowling_style: str | None = None
 
     photo_url: str | None = None
+    mobile_number: str | None = None
 
     base_price: float | None = Field(
     default=None,
@@ -43,6 +44,7 @@ class PlayerUpdate(BaseModel):
     bowling_style: str | None = None
 
     photo_url: str | None = None
+    mobile_number: str | None = None
 
     base_price: float = Field(
         default=10000,
