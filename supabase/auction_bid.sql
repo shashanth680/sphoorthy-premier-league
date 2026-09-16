@@ -3,9 +3,10 @@ CREATE OR REPLACE FUNCTION place_bid(
     p_team_id UUID,
     p_amount NUMERIC
 )
-RETURNS JSON
+RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
     v_auction auctions%ROWTYPE;
@@ -17,9 +18,7 @@ DECLARE
     v_bid_id UUID;
 BEGIN
 
-    -- Lock the auction row.
-    -- This prevents two bids from changing the same
-    -- auction at exactly the same time.
+    -- Lock the auction row so simultaneous bids are processed safely
     SELECT *
     INTO v_auction
     FROM auctions
@@ -30,27 +29,24 @@ BEGIN
         RAISE EXCEPTION 'Auction not found';
     END IF;
 
-
-    -- Auction must be live
     IF v_auction.status <> 'LIVE' THEN
         RAISE EXCEPTION 'Auction is not live';
     END IF;
-
 
     -- Check timer
     IF v_auction.ends_at IS NOT NULL
        AND v_now >= v_auction.ends_at THEN
 
         UPDATE auctions
-        SET status = 'AWAITING_SOLD',
+        SET
+            status = 'AWAITING_SOLD',
             updated_at = NOW()
         WHERE id = p_auction_id;
 
         RAISE EXCEPTION 'Auction timer has expired';
     END IF;
 
-
-    -- Get team
+    -- Lock team row
     SELECT *
     INTO v_team
     FROM teams
@@ -61,26 +57,22 @@ BEGIN
         RAISE EXCEPTION 'Team not found';
     END IF;
 
-
-    -- Count current squad
+    -- Check squad size
     SELECT COUNT(*)
     INTO v_squad_count
     FROM squads
     WHERE team_id = p_team_id;
 
-
     IF v_squad_count >= v_team.max_squad_size THEN
         RAISE EXCEPTION 'Team squad is already full';
     END IF;
 
-
-    -- Bid must be higher than current bid
+    -- Check bid amount
     IF p_amount <= v_auction.current_bid THEN
         RAISE EXCEPTION
             'Bid must be higher than current bid of %',
             v_auction.current_bid;
     END IF;
-
 
     -- Get auction settings
     SELECT *
@@ -89,11 +81,9 @@ BEGIN
     ORDER BY updated_at DESC
     LIMIT 1;
 
-
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Auction settings not found';
     END IF;
-
 
     -- Check minimum increment
     IF p_amount - v_auction.current_bid
@@ -104,26 +94,19 @@ BEGIN
             v_settings.bid_increment;
     END IF;
 
-
     -- Check purse
     IF p_amount > v_team.purse_remaining THEN
         RAISE EXCEPTION 'Insufficient purse';
     END IF;
 
-
-    -- Calculate timer extension.
-    --
-    -- If 10 seconds or less remain,
-    -- add 10 seconds.
+    -- Add 10 seconds when bid arrives in final 10 seconds
     IF v_auction.ends_at IS NOT NULL
-       AND (
-           EXTRACT(
-               EPOCH FROM (
-                   v_auction.ends_at - v_now
-               )
+       AND EXTRACT(
+           EPOCH FROM (
+               v_auction.ends_at - v_now
            )
-           <= v_settings.extension_seconds
-       ) THEN
+       ) <= v_settings.extension_seconds
+    THEN
 
         v_new_ends_at =
             v_auction.ends_at
@@ -133,13 +116,11 @@ BEGIN
 
     ELSE
 
-        v_new_ends_at =
-            v_auction.ends_at;
+        v_new_ends_at = v_auction.ends_at;
 
     END IF;
 
-
-    -- Insert bid
+    -- Record bid
     INSERT INTO bids (
         auction_id,
         player_id,
@@ -154,7 +135,6 @@ BEGIN
     )
     RETURNING id INTO v_bid_id;
 
-
     -- Update auction
     UPDATE auctions
     SET
@@ -164,8 +144,7 @@ BEGIN
         updated_at = NOW()
     WHERE id = p_auction_id;
 
-
-    RETURN json_build_object(
+    RETURN jsonb_build_object(
         'success', true,
         'bid_id', v_bid_id,
         'auction_id', p_auction_id,
@@ -176,3 +155,18 @@ BEGIN
 
 END;
 $$;
+
+
+-- Prevent direct execution by normal users
+REVOKE EXECUTE ON FUNCTION place_bid(UUID, UUID, NUMERIC)
+FROM PUBLIC;
+
+REVOKE EXECUTE ON FUNCTION place_bid(UUID, UUID, NUMERIC)
+FROM anon;
+
+REVOKE EXECUTE ON FUNCTION place_bid(UUID, UUID, NUMERIC)
+FROM authenticated;
+
+-- Backend uses the Supabase service role
+GRANT EXECUTE ON FUNCTION place_bid(UUID, UUID, NUMERIC)
+TO service_role;
