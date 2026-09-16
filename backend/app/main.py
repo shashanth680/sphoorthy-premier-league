@@ -7,6 +7,7 @@ from .routes.me import router as me_router
 from .routes.teams import router as teams_router
 from .routes.franchise import router as franchise_router
 from .routes.players import router as players_router
+from .routes.import_players import router as import_players_router
 
 
 app = FastAPI(
