@@ -55,17 +55,18 @@ def create_player(data):
                 detail="A player with this roll number already exists"
             )
 
-    player_data = {
-        "name": data.name,
-        "roll_number": data.roll_number,
-        "department": data.department,
-        "year": data.year,
-        "role": data.role,
-        "batting_style": data.batting_style,
-        "bowling_style": data.bowling_style,
-        "photo_url": data.photo_url,
-        "base_price": data.base_price
-    }
+   player_data = {
+    "name": data.name,
+    "roll_number": data.roll_number,
+    "department": data.department,
+    "year": data.year,
+    "role": data.role,
+    "batting_style": data.batting_style,
+    "bowling_style": data.bowling_style,
+    "mobile_number": data.mobile_number,
+    "photo_url": data.photo_url,
+    "base_price": data.base_price
+}
 
     response = (
         supabase
