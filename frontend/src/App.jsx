@@ -3,6 +3,7 @@ import { useState } from "react";
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
 import FranchiseDashboard from "./FranchiseDashboard";
+import ProjectorDisplay from "./ProjectorDisplay";
 
 
 function App() {
@@ -39,6 +40,20 @@ function App() {
   }
 
 
+  // Projector display
+  // This opens the clean auction screen.
+  if (
+    window.location.pathname ===
+    "/display"
+  ) {
+
+    return (
+      <ProjectorDisplay />
+    );
+  }
+
+
+  // Login
   if (!user) {
 
     return (
@@ -49,6 +64,7 @@ function App() {
   }
 
 
+  // Admin
   if (user.role === "admin") {
 
     return (
@@ -60,16 +76,19 @@ function App() {
   }
 
 
- if (user.role === "franchise") {
+  // Franchise
+  if (user.role === "franchise") {
 
-  return (
-    <FranchiseDashboard
-      user={user}
-      onLogout={logout}
-    />
-  );
-}
-return null;
+    return (
+      <FranchiseDashboard
+        user={user}
+        onLogout={logout}
+      />
+    );
+  }
+
+
+  return null;
 }
 
 
