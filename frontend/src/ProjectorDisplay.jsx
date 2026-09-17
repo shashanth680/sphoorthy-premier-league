@@ -1,4 +1,16 @@
 import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL;
+
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const supabase =
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
@@ -63,20 +75,48 @@ function ProjectorDisplay() {
   }
 
 
-  useEffect(() => {
+ useEffect(() => {
 
-    loadAuction();
+  loadAuction();
 
-    const interval =
-      setInterval(
-        loadAuction,
-        1000
-      );
 
-    return () =>
-      clearInterval(interval);
+  const channel =
+    supabase
+      .channel("spl-projector-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "auctions"
+        },
+        () => {
+          loadAuction();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "bids"
+        },
+        () => {
+          loadAuction();
+        }
+      )
+      .subscribe();
 
-  }, []);
+
+  return () => {
+
+    supabase.removeChannel(
+      channel
+    );
+
+  };
+
+}, []);
 
 
   useEffect(() => {
