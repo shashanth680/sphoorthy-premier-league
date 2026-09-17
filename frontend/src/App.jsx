@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import Login from "./Login";
+import AdminDashboard from "./AdminDashboard";
 
 
 function App() {
@@ -47,28 +48,27 @@ function App() {
   }
 
 
+  if (user.role === "admin") {
+
+    return (
+      <AdminDashboard
+        user={user}
+        onLogout={logout}
+      />
+    );
+  }
+
+
   return (
-    <div style={{
-      padding: "40px"
-    }}>
+    <div className="dashboard">
 
       <h1>
-        Sphoorthy Premier League
+        Welcome to SPL
       </h1>
 
-      <h2>
-        Welcome, {user.full_name}
-      </h2>
-
       <p>
-        Role: {user.role}
+        Franchise dashboard coming next.
       </p>
-
-      {user.team_id && (
-        <p>
-          Team ID: {user.team_id}
-        </p>
-      )}
 
       <button
         onClick={logout}
