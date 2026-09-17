@@ -8,7 +8,12 @@ def get_all_players():
     response = (
         supabase
         .table("players")
-        .select("*")
+        .select(
+            "id, name, roll_number, department, year, "
+            "role, batting_style, bowling_style, "
+            "photo_url, base_price, status, "
+            "created_at, updated_at"
+        )
         .order("name")
         .execute()
     )
@@ -21,7 +26,12 @@ def get_player(player_id: str):
     response = (
         supabase
         .table("players")
-        .select("*")
+        .select(
+            "id, name, roll_number, department, year, "
+            "role, batting_style, bowling_style, "
+            "photo_url, base_price, status, "
+            "created_at, updated_at"
+        )
         .eq("id", player_id)
         .single()
         .execute()
@@ -55,18 +65,19 @@ def create_player(data):
                 detail="A player with this roll number already exists"
             )
 
-   player_data = {
-    "name": data.name,
-    "roll_number": data.roll_number,
-    "department": data.department,
-    "year": data.year,
-    "role": data.role,
-    "batting_style": data.batting_style,
-    "bowling_style": data.bowling_style,
-    "mobile_number": data.mobile_number,
-    "photo_url": data.photo_url,
-    "base_price": data.base_price
-}
+    player_data = {
+        "name": data.name,
+        "roll_number": data.roll_number,
+        "department": data.department,
+        "year": data.year,
+        "role": data.role,
+        "batting_style": data.batting_style,
+        "bowling_style": data.bowling_style,
+        "mobile_number": data.mobile_number,
+        "photo_url": data.photo_url,
+        "base_price": data.base_price,
+        "status": "AVAILABLE"
+    }
 
     response = (
         supabase
