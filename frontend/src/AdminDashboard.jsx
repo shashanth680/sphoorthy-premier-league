@@ -116,13 +116,48 @@ function AdminDashboard({ user, onLogout }) {
   }
 
 
-  useEffect(() => {
+useEffect(() => {
 
-    loadData();
-
-  }, []);
+  loadData();
 
 
+  const channel =
+    supabase
+      .channel("spl-admin-auction-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "auctions"
+        },
+        () => {
+          loadData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "bids"
+        },
+        () => {
+          loadData();
+        }
+      )
+      .subscribe();
+
+
+  return () => {
+
+    supabase.removeChannel(
+      channel
+    );
+
+  };
+
+}, []);
   async function startAuction(
     playerId
   ) {
