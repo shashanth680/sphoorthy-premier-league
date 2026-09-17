@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
+import FranchiseDashboard from "./FranchiseDashboard";
 
 
 function App() {
@@ -59,25 +60,15 @@ function App() {
   }
 
 
+ if (user.role === "franchise") {
+
   return (
-    <div className="dashboard">
-
-      <h1>
-        Welcome to SPL
-      </h1>
-
-      <p>
-        Franchise dashboard coming next.
-      </p>
-
-      <button
-        onClick={logout}
-      >
-        Logout
-      </button>
-
-    </div>
+    <FranchiseDashboard
+      user={user}
+      onLogout={logout}
+    />
   );
+}
 }
 
 
