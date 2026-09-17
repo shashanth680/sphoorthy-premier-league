@@ -150,73 +150,83 @@ function AdminDashboard({ user, onLogout }) {
   }
 
 
-  async function pauseAuction() {
+ async function pauseAuction() {
 
-    if (!auction) return;
+  if (!auction) return;
 
-    try {
+  try {
 
-      const data =
-        await apiRequest(
-          `/api/auction/${auction.id}/pause`,
-          {
-            method: "POST"
-          }
-        );
+    setMessage("");
 
-      setMessage(
-        "Auction paused"
+    const data =
+      await apiRequest(
+        `/api/auction/${auction.id}/pause`,
+        {
+          method: "POST"
+        }
       );
 
-      setAuction(
-        previous => ({
-          ...previous,
-          status: data.status
-        })
-      );
+    setMessage(
+      `Auction paused at ${data.remaining_seconds} seconds`
+    );
 
-    } catch (error) {
+    setAuction(
+      previous => ({
+        ...previous,
+        status: data.status,
+        paused_remaining_seconds:
+          data.remaining_seconds
+      })
+    );
 
-      setMessage(
-        error.message
-      );
-    }
+  } catch (error) {
+
+    setMessage(
+      error.message
+    );
+
   }
+}
 
 
-  async function resumeAuction() {
+ async function resumeAuction() {
 
-    if (!auction) return;
+  if (!auction) return;
 
-    try {
+  try {
 
-      const data =
-        await apiRequest(
-          `/api/auction/${auction.id}/resume`,
-          {
-            method: "POST"
-          }
-        );
+    setMessage("");
 
-      setMessage(
-        "Auction resumed"
+    const data =
+      await apiRequest(
+        `/api/auction/${auction.id}/resume`,
+        {
+          method: "POST"
+        }
       );
 
-      setAuction(
-        previous => ({
-          ...previous,
-          status: data.status
-        })
-      );
+    setMessage(
+      `Auction resumed with ${data.remaining_seconds} seconds`
+    );
 
-    } catch (error) {
+    setAuction(
+      previous => ({
+        ...previous,
+        status: data.status,
+        ends_at: data.ends_at,
+        paused_remaining_seconds:
+          null
+      })
+    );
 
-      setMessage(
-        error.message
-      );
-    }
+  } catch (error) {
+
+    setMessage(
+      error.message
+    );
+
   }
-
+}
 
   async function markSold() {
 
