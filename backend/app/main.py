@@ -10,6 +10,9 @@ from .routes.players import router as players_router
 from .routes.import_players import router as import_players_router
 from .routes.bids import router as bids_router
 from .routes.auction import router as auction_router
+from .routes.auction_result import (
+    router as auction_result_router
+)
 
 
 app = FastAPI(
@@ -38,6 +41,9 @@ app.include_router(franchise_router)
 app.include_router(players_router)
 app.include_router(bids_router)
 app.include_router(auction_router)
+app.include_router(
+    auction_result_router
+)
 
 
 @app.get("/")
