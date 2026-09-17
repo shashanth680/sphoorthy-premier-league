@@ -6,7 +6,6 @@ from ..supabase_client import supabase
 def mark_sold(auction_id: str):
 
     try:
-
         response = supabase.rpc(
             "mark_auction_sold",
             {
@@ -14,58 +13,27 @@ def mark_sold(auction_id: str):
             }
         ).execute()
 
-    except Exception as error:
-
-        message = str(error)
-
-        if "Auction not found" in message:
-            raise HTTPException(
-                status_code=404,
-                detail="Auction not found"
-            )
-
-        if "No team has placed a bid" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="No team has placed a bid"
-            )
-
-        if "cannot be marked sold" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="Auction cannot be marked sold"
-            )
-
-        if "squad is already full" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="Team squad is already full"
-            )
-
-        if "insufficient purse" in message.lower():
-            raise HTTPException(
-                status_code=400,
-                detail="Team has insufficient purse"
-            )
-
+    except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail="Failed to mark player as sold"
+            status_code=400,
+            detail=str(e)
         )
 
     if not response.data:
         raise HTTPException(
-            status_code=500,
-            detail="Failed to mark player as sold"
+            status_code=400,
+            detail="Failed to mark auction as sold"
         )
 
-    return response.data
+    return {
+        "success": True,
+        "result": response.data
+    }
 
 
 def mark_unsold(auction_id: str):
 
     try:
-
         response = supabase.rpc(
             "mark_auction_unsold",
             {
@@ -73,111 +41,19 @@ def mark_unsold(auction_id: str):
             }
         ).execute()
 
-    except Exception as error:
-
-        message = str(error)
-
-        if "Auction not found" in message:
-            raise HTTPException(
-                status_code=404,
-                detail="Auction not found"
-            )
-
-        if "cannot be marked unsold" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="Auction cannot be marked unsold"
-            )
-
+    except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail="Failed to mark player as unsold"
+            status_code=400,
+            detail=str(e)
         )
 
     if not response.data:
         raise HTTPException(
-            status_code=500,
-            detail="Failed to mark player as unsold"
+            status_code=400,
+            detail="Failed to mark auction as unsold"
         )
 
-    return response.data
-    def pause(auction_id: str):
-
-    try:
-
-        response = supabase.rpc(
-            "pause_auction",
-            {
-                "p_auction_id": auction_id
-            }
-        ).execute()
-
-    except Exception as error:
-
-        message = str(error)
-
-        if "Auction not found" in message:
-            raise HTTPException(
-                status_code=404,
-                detail="Auction not found"
-            )
-
-        if "Only a live auction can be paused" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="Only a live auction can be paused"
-            )
-
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to pause auction"
-        )
-
-    if not response.data:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to pause auction"
-        )
-
-    return response.data
-
-
-def resume(auction_id: str):
-
-    try:
-
-        response = supabase.rpc(
-            "resume_auction",
-            {
-                "p_auction_id": auction_id
-            }
-        ).execute()
-
-    except Exception as error:
-
-        message = str(error)
-
-        if "Auction not found" in message:
-            raise HTTPException(
-                status_code=404,
-                detail="Auction not found"
-            )
-
-        if "Only a paused auction can be resumed" in message:
-            raise HTTPException(
-                status_code=400,
-                detail="Only a paused auction can be resumed"
-            )
-
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to resume auction"
-        )
-
-    if not response.data:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to resume auction"
-        )
-
-    return response.data
+    return {
+        "success": True,
+        "result": response.data
+    }
