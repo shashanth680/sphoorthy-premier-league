@@ -5,8 +5,105 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background: #0f172a;
+}
+
+button,
+input {
+  font: inherit;
 }
 
 button {
   cursor: pointer;
+}
+
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 40px;
+
+  background: white;
+
+  border-radius: 16px;
+
+  text-align: center;
+}
+
+.login-card h1 {
+  margin: 0;
+
+  font-size: 32px;
+}
+
+.login-card h2 {
+  margin: 8px 0;
+
+  font-size: 22px;
+}
+
+.login-card p {
+  color: #64748b;
+
+  margin-bottom: 30px;
+}
+
+.login-card form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.login-card input {
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 8px;
+
+  outline: none;
+}
+
+.login-card button {
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #111827;
+
+  color: white;
+
+  font-weight: bold;
+}
+
+.login-card button:disabled {
+  opacity: 0.6;
+}
+
+.login-error {
+  padding: 10px;
+
+  border-radius: 8px;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+
+  font-size: 14px;
 }
