@@ -271,3 +271,221 @@ button {
   border-radius: 16px;
   text-align: center;
 }
+/* ============================= */
+/* PROJECTOR DISPLAY */
+/* ============================= */
+
+.projector-screen {
+  min-height: 100vh;
+  background: #020617;
+  color: white;
+  padding: 30px 50px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.projector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #334155;
+  padding-bottom: 20px;
+}
+
+.projector-brand {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.projector-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.projector-live {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.projector-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  padding: 30px 0;
+}
+
+.projector-player {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.projector-photo {
+  width: 300px;
+  height: 360px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.projector-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-photo {
+  font-size: 30px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.projector-player-info h1 {
+  font-size: 52px;
+  margin: 0 0 15px;
+  line-height: 1.1;
+}
+
+.projector-player-info p {
+  font-size: 25px;
+  margin: 8px 0;
+  color: #cbd5e1;
+}
+
+.base-price {
+  margin-top: 35px;
+  font-size: 20px;
+  color: #94a3b8;
+}
+
+.base-price strong {
+  display: block;
+  font-size: 30px;
+  color: white;
+  margin-top: 5px;
+}
+
+.projector-bidding {
+  text-align: center;
+}
+
+.current-bid-label {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #94a3b8;
+}
+
+.projector-current-bid {
+  font-size: 82px;
+  font-weight: 900;
+  margin: 15px 0 30px;
+}
+
+.highest-bidder {
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.highest-bidder span {
+  display: block;
+  font-size: 18px;
+  color: #94a3b8;
+  letter-spacing: 2px;
+}
+
+.highest-bidder strong {
+  display: block;
+  font-size: 34px;
+  margin-top: 8px;
+}
+
+.projector-timer {
+  font-size: 110px;
+  font-weight: 900;
+  margin-top: 25px;
+  line-height: 1;
+}
+
+.projector-timer small {
+  display: block;
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+.projector-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 2px solid #334155;
+  padding-top: 15px;
+  color: #94a3b8;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.projector-waiting {
+  text-align: center;
+  margin: auto;
+}
+
+.projector-waiting h2 {
+  font-size: 55px;
+  margin-bottom: 15px;
+}
+
+.projector-waiting p {
+  font-size: 24px;
+  color: #94a3b8;
+}
+
+
+/* ============================= */
+/* PROJECTOR RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 1000px) {
+
+  .projector-screen {
+    padding: 20px;
+  }
+
+  .projector-main {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .projector-player {
+    justify-content: center;
+  }
+
+  .projector-photo {
+    width: 220px;
+    height: 270px;
+  }
+
+  .projector-player-info h1 {
+    font-size: 38px;
+  }
+
+  .projector-current-bid {
+    font-size: 60px;
+  }
+
+  .projector-timer {
+    font-size: 80px;
+  }
+}
