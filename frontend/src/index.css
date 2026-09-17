@@ -196,3 +196,78 @@ button {
   gap: 12px;
   flex-wrap: wrap;
 }
+.purse-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.purse-card strong {
+  font-size: 24px;
+}
+
+.franchise-auction {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.auction-status {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.franchise-bid {
+  margin: 30px 0;
+}
+
+.franchise-bid span {
+  display: block;
+  color: #64748b;
+}
+
+.franchise-bid strong {
+  display: block;
+  font-size: 40px;
+  margin-top: 8px;
+}
+
+.timer {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 20px;
+}
+
+.bid-button {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 20px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #111827;
+  color: white;
+
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.bid-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.waiting-screen {
+  background: white;
+  padding: 60px 30px;
+  border-radius: 16px;
+  text-align: center;
+}
