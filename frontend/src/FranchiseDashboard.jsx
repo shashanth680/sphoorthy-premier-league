@@ -114,21 +114,48 @@ function FranchiseDashboard({
   }
 
 
-  useEffect(() => {
+ useEffect(() => {
 
-    loadData();
+  loadData();
 
-    const interval =
-      setInterval(
-        loadData,
-        2000
-      );
 
-    return () =>
-      clearInterval(interval);
+  const channel =
+    supabase
+      .channel("spl-auction-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "auctions"
+        },
+        () => {
+          loadData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "bids"
+        },
+        () => {
+          loadData();
+        }
+      )
+      .subscribe();
 
-  }, []);
 
+  return () => {
+
+    supabase.removeChannel(
+      channel
+    );
+
+  };
+
+}, []);
 
   useEffect(() => {
 
