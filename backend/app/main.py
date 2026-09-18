@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .routes.password_reset import router as password_reset_router
 
 from .config import FRONTEND_URL
 from .routes.auth import router as auth_router
@@ -33,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(password_reset_router)
 app.include_router(auth_router)
 app.include_router(me_router)
 app.include_router(teams_router)
